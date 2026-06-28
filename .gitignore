@@ -1,0 +1,38 @@
+# R
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+.Rapp.history
+*.Rproj
+.Rcheck/
+
+# Environment / secrets
+.Renviron
+.env
+
+# Parquet / data caches and saved projections
+data/cache/**/*.parquet
+data/cache/**/*.feather
+data/cache/**/*.csv
+data/cache/**/*.rds
+data/*.rds
+!data/cache/.gitkeep
+
+# Driver-script output
+scripts/output/
+
+# Binary workfiles (EViews) — do not commit
+*.wf1
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+data/*.txt
+data/*.parquet
+data/*.csv
+data/*.png

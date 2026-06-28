@@ -1,0 +1,11 @@
+# Copy to .Renviron and fill in. .Renviron is gitignored.
+# Sourced automatically by R at session start.
+#
+# Keys are only needed for LIVE data download (scripts/01_update_data.R).
+# The model itself runs against the bundled fixture with no keys.
+
+# FRED — register at https://fred.stlouisfed.org/docs/api/api_key.html
+FRED_API_KEY=
+
+# Optional: where the local parquet data cache lives. Defaults to data/cache.
+# MARTIN_DATA_CACHE=

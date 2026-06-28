@@ -1,0 +1,66 @@
+COMMENT> ============================  INTEREST RATES  ============================
+
+COMMENT> 10 Year Bond Rate
+BEHAVIORAL> N10R
+TSRANGE 1993 1 2019 3
+EQ> N10R = c1*TSLAG(N10R,1)
+            +c2*(RSTAR+PI_E+0.25*(NCR-PI_E-RSTAR))
+            +c3
+COEFF> c1 c2 c3
+RESTRICT> c1+c2 = 1
+
+COMMENT> 2-Year Bond Rate
+BEHAVIORAL> N2R
+TSRANGE 1993 1 2019 3
+EQ> N2R= c1 + c2*(RSTAR+PI_E+0.52*(NCR-RSTAR-PI_E))
+            +c3*TSLAG(N2R,1)
+COEFF> c1 c2 c3
+RESTRICT> c2 + c3 = 1
+
+COMMENT> Nominal business borrowing rate spread to the cash rate
+BEHAVIORAL> NBRSP
+TSRANGE 1993 1 2019 3
+EQ> NBRSP = c1 + c2*TSLAG(NBRSP,1) + c3*LURGAP
+COEFF> c1 c2 c3
+
+COMMENT> Spread Between Nominal Mortgage and Cash Rate
+BEHAVIORAL> NSP
+TSRANGE 1998 1 2019 3
+EQ> NSP = c1 + c2*D_NSP + c3*TSLAG(NSP,1)
+COEFF>c1 c2 c3
+
+COMMENT> NCR
+BEHAVIORAL> NCR
+TSRANGE 2000 1 2019 3
+EQ> NCR  =c1*( 0.7  * TSLAG(NCR,1)  + 0.3  * ( RSTAR  + (PTM  / TSLAG(PTM,4)  * 100  - 100)  + (2  - 1)  * (PTM  / TSLAG(PTM,4)  * 100  - 100  - PI_TARGET)  - 2  * LURGAP)  - 2  / 2  * (LUR  - TSLAG(LUR,2)) )
+COEFF>c1
+RESTRICT>c1=1
+
+COMMENT> RCR
+IDENTITY> RCR
+EQ>  RCR  = ((1  + NCR  / 100)  / (1  + PTM  / TSLAG(PTM,4)  - 1))  * 100  - 100
+
+COMMENT> R2R
+IDENTITY> R2R
+EQ>  R2R  = ((1  + N2R  / 100)  / (1  + PTM  / TSLAG(PTM,4)  - 1))  * 100  - 100
+
+COMMENT> NBR
+IDENTITY> NBR
+EQ>  NBR  = NCR  + NBRSP
+
+COMMENT> RBR
+IDENTITY> RBR
+EQ>  RBR  = (1  + (1  - IBCTR)  * NBR  / 100)  / (TSLAG(PTM,1)  / TSLAG(PTM,5))  * 100  - 100
+
+COMMENT> NMR
+IDENTITY> NMR
+EQ>  NMR  = NCR  + NSP
+
+COMMENT> RMR
+IDENTITY> RMR
+EQ>  RMR  = ( (1  + NMR  / 100)  / (PTM  / TSLAG(PTM,4))  - 1 )  * 100
+
+COMMENT> RMRE
+IDENTITY> RMRE
+EQ>  RMRE  = NMR  - PI_E
+
