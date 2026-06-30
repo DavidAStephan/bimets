@@ -7,11 +7,14 @@
 #' All source fetchers cache their output as parquet under [cache_path()] —
 #' a re-run on the same vintage returns instantly. `refresh = TRUE` re-pulls.
 #'
-#' v0 status: `fred` is implemented end-to-end against the live API;
-#' `abs`, `rba`, `oecd`, `worldbank`, `bom` are stubs that throw informative
-#' errors when called. The catalogue
-#' ([series_catalogue()]) covers all sources so the institutional knowledge
-#' is preserved even ahead of the fetchers.
+#' All six sources are implemented: `fred` (via `fredr`, needs a FRED API key),
+#' `abs` (`readabs`), `rba` (`readrba`), `oecd` (the OECD SDMX REST API, no key),
+#' `worldbank` (the bundled Pink Sheet commodity-price xlsx), and `bom` (the SOI
+#' plaintext table). The catalogue ([series_catalogue()]) maps every source
+#' series to its MARTIN variable name. A source that errors at run time
+#' (offline, missing key) is tolerated by default (see `tolerate_failures`), so
+#' the run continues and the downstream pipeline can backfill from the bundled
+#' fixture via [merge_with_fallback()].
 #'
 #' @param vintage A `Date` identifying the data vintage. Stamped into every
 #'   row's `vintage` column and used as the cache key. Defaults to today.

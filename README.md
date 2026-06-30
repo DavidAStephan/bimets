@@ -124,6 +124,36 @@ partial / recent-only CSV, fill the gaps from the bundled data
 (includes forecasting past your data end, scenarios, and IRFs). The runnable
 demo is `Rscript scripts/09_forecast_from_csv.R`.
 
+## Build the database from public data
+
+The other way to get data in: pull current vintages from the agencies and build
+the database (instead of the frozen fixture or a CSV).
+
+```r
+source("setup.R")
+panel <- update_data(vintage = Sys.Date())          # ABS / RBA / FRED / OECD / World Bank / BoM
+db    <- to_martin_database(panel)                   # pivot to MARTIN variables + build
+db    <- merge_with_fallback(db, read_fixture())     # backfill deep history from the fixture
+```
+
+Each source has a fetcher in `R/fetch_*.R`, wired to `readabs` / `readrba` /
+`fredr` / the OECD SDMX API / the bundled Pink Sheet / BoM. `update_data()`
+caches each source as parquet under `data/cache/`, so re-runs on the same
+vintage are instant. FRED needs an API key in `.Renviron`; a source that fails
+(offline, missing key) is skipped and backfilled from the fixture. Driver:
+`scripts/01_update_data.R`.
+
+### Re-estimating the state-space trends
+
+`to_martin_database()` re-estimates MARTIN's unobserved-component trends — the
+NAIRU (`TLUR`), the neutral real rate (`RSTAR`), inflation expectations
+(`PI_E`), and the productivity / population / hours trends — with KFAS Kalman
+filters as part of the build (`R/state_space.R`: `fit_nairu_kfas()`,
+`fit_rstar_kfas_full()`, `fit_pie_kfas()`, via `apply_state_space_trends()`).
+This runs on the **public-data path only**; `read_fixture()` and
+`read_csv_database()` use the trend values already present in the file rather
+than re-estimating them.
+
 ## Coefficients: frozen vs re-estimated
 
 The behavioural (AF) model defines 95 `BEHAVIORAL>` equations, split for
