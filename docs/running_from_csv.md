@@ -198,6 +198,70 @@ Rscript scripts/09_forecast_from_csv.R
 
 ---
 
+## 6. Moving to another machine (offline / work computer)
+
+A common setup: you can fetch data on one machine but want to **run the model on
+another** that is offline, has no API keys, or can't install the download
+packages. Freeze the data to a CSV on the connected machine and carry just that
+CSV across.
+
+### Get the code there
+
+```sh
+git clone https://github.com/DavidAStephan/bimets.git
+cd bimets
+```
+
+In R, install only the **required** packages — the CSV path doesn't need the
+live-download ones (`readabs`, `readrba`, `fredr`, `arrow`, `OECD`):
+
+```r
+install.packages(c(
+  "bimets","dplyr","tidyr","tibble","purrr","rlang","stringr","lubridate",
+  "readr","glue","readxl","xts","zoo","KFAS","tempdisagg",
+  "fable","fabletools","feasts","tsibble"
+))
+```
+
+`setup.R` only prints a note (not an error) if the optional download packages
+are absent, so this lean install is enough to run everything below.
+
+### Build the CSV once, on a machine that has the data
+
+Export **after** `to_martin_database()` so the re-estimated state-space trends
+(`TLUR`, `RSTAR`, `PI_E`, ...) and the full history are **baked into the CSV** —
+the offline machine then needs no network, no keys, and no re-estimation:
+
+```r
+source("setup.R")
+panel <- update_data()                            # current ABS/RBA/FRED/... vintages
+db    <- to_martin_database(panel)                # builds + re-estimates the trends
+db    <- merge_with_fallback(db, read_fixture())  # backfill deep history
+database_to_csv(db, "martin_data.csv")            # freeze the whole database to one CSV
+```
+
+(No connected machine? Use the fixture template from
+[step 1](#the-easy-way-start-from-a-template) and fill in your own numbers
+instead — then carry that CSV across.)
+
+### Run it on the offline machine
+
+Copy `martin_data.csv` over, then:
+
+```r
+source("setup.R")
+db   <- read_csv_database("martin_data.csv", fallback = read_fixture())
+db   <- extend_exogenous(db, end_quarter = "2026Q1")        # only if forecasting past the data end
+base <- solve_martin(db, horizon = c("2010Q1", "2026Q1"))   # forecast
+irf  <- standard_irfs(db, horizon = c("2010Q1", "2026Q1"))  # impulse responses
+```
+
+Everything runs locally from the one CSV — no downloads. (If you built the CSV
+the "baked-in trends" way above, `fallback = read_fixture()` is belt-and-braces;
+keep it so any column you didn't carry still resolves.)
+
+---
+
 ## Things worth knowing
 
 - **Variable names are case-sensitive.** `rc` won't be recognised as `RC`; the
