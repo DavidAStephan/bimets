@@ -1,0 +1,11 @@
+COMMENT> WPX
+BEHAVIORAL> WPX
+TSRANGE 1985 1 2019 3
+EQ> TSDELTALOG(WPX,1) = c1+c2*(LOG(TSLAG(WPX,1)/TSLAG(WP,1)))
+                        +c3*WPX_TREND_1
+                        +c4*WPX_TREND_2
+                        +c5*TSLAG(TSDELTALOG(WPX,1))
+                        +c6*TSDELTALOG(WP,1)
+                        +c7*D_2008Q4
+COEFF> c1 c2 c3 c4 c5 c6 c7
+RESTRICT> c5+c6=1

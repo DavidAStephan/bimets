@@ -1,0 +1,3 @@
+COMMENT> PY
+IDENTITY> PY
+EQ>  PY  = NY  * 100  / Y

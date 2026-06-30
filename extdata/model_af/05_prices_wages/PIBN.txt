@@ -1,0 +1,12 @@
+COMMENT> PIBN
+BEHAVIORAL> PIBN
+TSRANGE 1988 2 2019 3
+EQ> TSDELTALOG(PIBN,1)=c1+c2*(LOG(TSLAG(PIBN,1))-LOG(TSLAG(PC,1)))
+                +c3*PIBN_TREND_1
+                +c4*PIBN_TREND_2
+                +c5*TSLAG(TSDELTALOG(PIBN,1),1)
+                +c6*TSLAG(TSDELTALOG(PIBN,1),2)
+                +c7*TSDELTALOG(PM,1)
+                +c8*D_GSTSEP
+COEFF> c1 c2 c3 c4 c5 c6 c7 c8
+RESTRICT>c5+c6+c7=1

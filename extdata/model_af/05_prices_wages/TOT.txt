@@ -1,0 +1,3 @@
+COMMENT> TOT
+IDENTITY> TOT
+EQ>  TOT  = PX  / PM  * 100

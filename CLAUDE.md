@@ -35,6 +35,7 @@ Bundled data files live in `extdata/` and are resolved with `extdata_path()`
 |---|---|
 | `setup.R` | the loader — source this first |
 | `R/fetch_*.R`, `cache.R`, `catalogue.R`, `update_data.R` | download data (ABS/RBA/FRED/OECD/World Bank/BoM); `to_martin_database()` builds the bimets database |
+| `R/csv_data.R` | **offline / bring-your-own-data** alternative to downloading: `read_csv_database()` loads a CSV (one column per MARTIN variable + a period column) straight into the bimets database shape; `database_to_csv()` exports any database (e.g. the fixture) to that format as a template; `martin_model_variables()` lists the model's endo+exo names. Optional `fallback =` fills gaps from the fixture via `merge_with_fallback()`. |
 | `R/transformations.R`, `identities.R`, `derived.R`, `dummies.R`, `state_space.R`, `tpw.R`, `production.R`, `extend_exogenous.R`, `merge.R` | manipulate / create data (splicing, Chow-Lin, PIM, KFAS trends, dummies) |
 | `R/nowcast.R`, `handover.R`, `conversion.R` | ragged-edge handover (Q+0/Q+1) via `fable` |
 | `R/load_martin.R`, `model_features.R`, `equation_catalogue.R` | estimate + build the model in bimets |
@@ -42,9 +43,9 @@ Bundled data files live in `extdata/` and are resolved with `extdata_path()`
 | `R/sensitivity_matrix.R` | generic IRF / multiplier table: every adjustable equation swept with a tiny standardized add-factor |
 | `R/irf_scenarios.R` | the four *named, economically-sized* standard IRFs (`standard_irfs()`): +100bp cash rate, +1% govt consumption, permanent +10% commodity prices, +10% real-exchange-rate appreciation. All delivered as add-factors (exogenize does **not** propagate downstream in this engine). |
 | `R/adjustment.R`, `quarter.R` | the add-factor S3 class + horizon expansion |
-| `extdata/model_af/` | the default behavioural (AF) model, split into one file per economic block (consumption, prices, exports, imports, identities, ...); assembled at load by `read_model_lines("af")`. `extdata/MARTINMOD.txt`/`MARTINMOD_EST.txt` are the other single-file variants. |
+| `extdata/model_af/` | the default behavioural (AF) model, split into **one file per equation** (`RC.txt`, `ID.txt`, ...) grouped into per-block subdirectories (`01_household/`, `05_prices_wages/`, ..., `12_trends/`); assembled at load by `read_model_lines("af")` (recurses the subdirs, wraps in `MODEL`...`END`). Equation/file order is irrelevant — bimets builds the system from the equations. `extdata/MARTINMOD.txt`/`MARTINMOD_EST.txt` are the other single-file variants. |
 | `extdata/` | `equation_catalogue.csv`, `series_catalogue.csv`, dummy specs, the CMO commodity xlsx, frozen `martin_data_fixture.xlsx` |
-| `scripts/01..08` | runnable drivers, one per capability (03 unconditional forecast, 04 conditional forecast, 05 generic IRF matrix, 08 standard IRF battery) |
+| `scripts/01..09` | runnable drivers, one per capability (03 unconditional forecast, 04 conditional forecast, 05 generic IRF matrix, 08 standard IRF battery, 09 forecast from a CSV instead of downloading) |
 | `tests/` | `testthat` suite + `tests/run_tests.R` |
 
 ## Key facts to preserve
@@ -74,7 +75,8 @@ Bundled data files live in `extdata/` and are resolved with `extdata_path()`
 ## Conventions
 
 - snake_case for code; UPPERCASE for MARTIN variable names (bimets is
-  case-sensitive — follow the blocks in `extdata/model_af/`).
+  case-sensitive — follow the per-equation files in `extdata/model_af/`, where
+  each equation lives in `<block>/<VARNAME>.txt`).
 - Explicit namespacing in source (`dplyr::filter()`), except the `bimets` verbs
   which are used un-namespaced (and `bimets` is attached by `setup.R`).
 - No emojis in code, files, or commits.

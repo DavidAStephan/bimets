@@ -1,0 +1,3 @@
+COMMENT> NG
+IDENTITY> NG
+EQ>  NG  = PG  * G  / 100

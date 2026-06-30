@@ -1,0 +1,10 @@
+COMMENT> Nominal household Financial assets
+BEHAVIORAL> NHFA
+TSRANGE 1993 1 2019 3
+EQ> TSDELTALOG(NHFA,1)=c1+c2*(LOG(TSLAG(NHFA,1))-LOG(TSLAG(NGNE,1)))
+                  +c3*TSDELTALOG(NGNE,1)
+                  +c4*(TSLAG(TDLLA,1) + TSLAG(TDLLPOP,1) + TSLAG(TDLLPOP,1) + PI_E/400)
+                  +c5*NHFA_TREND
+                  +c6*PID_TREND
+COEFF> c1 c2 c3 c4 c5 c6
+RESTRICT>c3+c4=1

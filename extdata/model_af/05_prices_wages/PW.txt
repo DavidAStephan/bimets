@@ -1,0 +1,11 @@
+COMMENT> PW
+BEHAVIORAL> PW
+TSRANGE 1998 1 2019 3
+EQ> TSDELTALOG(PW,1)=c1*TDLLA
+                    +c2*(TSLAG(LURGAP,1)/TSLAG(LUR,1))
+                    +c3*TSLAG(TSDELTA(LUR,1),1)
+                    +c4*PI_E/400
+                    +c5*(LOG(TSLAG(PY,1))-LOG(TSLAG(PY,9)))/8
+                    +c6*TSLAG(TSDELTALOG(PW,1))
+COEFF> c1 c2 c3 c4 c5 c6
+RESTRICT>c4+c5+c6=1

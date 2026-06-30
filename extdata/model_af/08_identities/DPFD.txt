@@ -1,0 +1,3 @@
+COMMENT> DPFD
+IDENTITY> DPFD
+EQ>  DPFD  = RC  + ID  + IB  + OTC  - ATS

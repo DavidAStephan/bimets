@@ -1,0 +1,3 @@
+COMMENT> RMR
+IDENTITY> RMR
+EQ>  RMR  = ( (1  + NMR  / 100)  / (PTM  / TSLAG(PTM,4))  - 1 )  * 100

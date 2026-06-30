@@ -1,0 +1,3 @@
+COMMENT> NC
+IDENTITY> NC
+EQ>  NC  = PC  * RC  / 100

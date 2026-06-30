@@ -1,0 +1,10 @@
+COMMENT> PMCG
+BEHAVIORAL> PMCG
+TSRANGE 1986 3 2019 3
+EQ> TSDELTALOG(PMCG,1) = c2*TSDELTALOG(PM,1) 
+                        + c6*TSLAG(TSDELTALOG(PMCG,1),1) 
+                        + c3*TSDELTALOG(POIL,1)
+                        + c4*TSLAG(TSDELTALOG(POIL,1),1) 
+                        + c5*D_CPMCG
+COEFF> c2 c6 c3 c4 c5
+RESTRICT>c6+c2+c3+c4=1

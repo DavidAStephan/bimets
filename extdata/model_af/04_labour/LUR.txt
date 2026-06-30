@@ -1,0 +1,8 @@
+COMMENT> Employment Rate
+BEHAVIORAL> LUR
+TSRANGE 1964 2 2019 3
+EQ> TSDELTA(LUR,1) = c1*(LOKLAG*(TSDELTA(TSLAG(LUR,1)))- LUR_DUM*0.025*(TSLAG(LUR,2)-TSLAG(TLUR,1))) 
+                    + c2*( ((LOG(Y)-LOG(TSLAG(Y,2)))/2) - TY )
+                    + c3*( (LOG(TSLAG(RULC,2))-LOG(TSLAG(RULC,4)))/2 )
+COEFF> c1 c2 c3
+RESTRICT>c1=1

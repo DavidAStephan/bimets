@@ -1,0 +1,5 @@
+COMMENT> Spread Between Nominal Mortgage and Cash Rate
+BEHAVIORAL> NSP
+TSRANGE 1998 1 2019 3
+EQ> NSP = c1 + c2*D_NSP + c3*TSLAG(NSP,1)
+COEFF>c1 c2 c3

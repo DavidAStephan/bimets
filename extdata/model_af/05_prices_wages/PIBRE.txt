@@ -1,0 +1,12 @@
+COMMENT> PIBRE
+BEHAVIORAL> PIBRE
+TSRANGE 1990 1 2019 3
+EQ> TSDELTALOG(PIBRE,1) = c1+c2*( LOG(TSLAG(PIBRE,1))-LOG(TSLAG(PC,1)) )
+                    +c3*TSDELTALOG(PC,1)
+                    +c4*TSLAG(TSDELTALOG(PIBRE,1),1)
+                    +c5*PIBRE_DUM1 
+                    +c6*PIBRE_DUM2 
+                    +c7*PIBRE_DUM3
+                    +c8*PIBRE_DUM4
+COEFF> c1 c2 c3 c4 c5 c6 c7 c8
+RESTRICT>c3+c4=1

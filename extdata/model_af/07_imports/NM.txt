@@ -1,0 +1,3 @@
+COMMENT> NM
+IDENTITY> NM
+EQ>  NM  = PM  * M  / 100

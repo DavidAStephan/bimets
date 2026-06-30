@@ -1,0 +1,5 @@
+COMMENT> Nominal business borrowing rate spread to the cash rate
+BEHAVIORAL> NBRSP
+TSRANGE 1993 1 2019 3
+EQ> NBRSP = c1 + c2*TSLAG(NBRSP,1) + c3*LURGAP
+COEFF> c1 c2 c3
