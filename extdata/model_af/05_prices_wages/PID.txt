@@ -1,0 +1,14 @@
+COMMENT> PID
+BEHAVIORAL> PID
+TSRANGE 1985 1 2019 3
+EQ> TSDELTALOG(PID,1) = c1+c2*LOG(TSLAG(PID,1))
+                        +c3*(-LOG(TSLAG(PC,1)))
+                        +c4*(-LOG(TSLAG(PM,1)))
+                        +c5*TSLAG(TSDELTALOG(PID,1),1)
+                        +c6*PI_E/400
+                        +c7*D_GSTSEP
+                        +c8*D_GSTDEC
+                        +c9*PID_TREND/100
+COEFF> c1 c2 c3 c4 c5 c6 c7 c8 c9
+RESTRICT>c5+c6=1
+RESTRICT>c3+c4-c2=0 

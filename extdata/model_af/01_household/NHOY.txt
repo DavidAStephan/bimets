@@ -1,0 +1,8 @@
+COMMENT> Nominal Household Other Income
+BEHAVIORAL> NHOY
+TSRANGE 1985 1 2019 3
+EQ> TSDELTALOG(NHOY,1) = c1 + c2*(LOG(TSLAG(NHOY,1)) - LOG(TSLAG(NYEXCOE,1)))
+                    +c3*TSDELTA(NMR,1)/100 
+                    +c4*(TSLAG(TDLLA,1) + TSLAG(TDLLPOP,1) + TSLAG(TDLLPOP,1) + PI_E/400)
+COEFF> c1 c2 c3 c4
+RESTRICT>c4=1

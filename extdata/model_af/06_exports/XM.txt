@@ -1,0 +1,11 @@
+COMMENT> XM
+BEHAVIORAL> XM
+TSRANGE 1986 2 2019 3
+EQ> TSDELTALOG(XM) = c1+c2*(LOG(TSLAG(XM,1))-LOG(TSLAG(WY,1)))
+                    +c3*LOG(TSLAG(REWI,1))
+                    +c4*TSLAG(TSDELTALOG(WY,1),1)
+                    +c5*TSLAG(TSDELTALOG(WY,1),2)
+                    +c6*(TSLAG(TDLLA,1) + TSLAG(TDLLPOP,1) + TSLAG(TDLLPOP,1))
+                    +c7*XS_TREND
+COEFF> c1 c2 c3 c4 c5 c6 c7
+RESTRICT>c5+c6=1

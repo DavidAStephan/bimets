@@ -1,0 +1,3 @@
+COMMENT> IBCR
+IDENTITY> IBCR
+EQ>  IBCR  = (RBR  / 100  + IBNDRA  / 100)  * ((1  - IBCTR  * (IBNDRA  / 100  * (1  + N10R  / 100)  / (N10R  / 100  + IBNDRA  / 100)))  / (1  - IBCTR))  * (PIBN  / PGNE)

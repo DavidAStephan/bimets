@@ -1,0 +1,3 @@
+COMMENT> RBR
+IDENTITY> RBR
+EQ>  RBR  = (1  + (1  - IBCTR)  * NBR  / 100)  / (TSLAG(PTM,1)  / TSLAG(PTM,5))  * 100  - 100

@@ -1,0 +1,13 @@
+COMMENT> Nominal household credit
+BEHAVIORAL> NHC
+TSRANGE 1993 1 2019 3
+EQ> TSDELTALOG(NHC,1)=c1+c2*(LOG(TSLAG(NHC,1))-LOG(TSLAG(PH,1))-LOG(TSLAG(KID,2)))
+            +c3*TSLAG(RMR,1)
+            +c4*TSDELTALOG(TSLAG(NHC,1),1)
+            +c5*TSDELTALOG(TSLAG(PH,1),1)
+            +c6*TSDELTALOG(TSLAG(KID,2),1)
+            +c7*TSDELTA(TSLAG(NMR,1),1)
+            +c8*(PI_E/400)
+COEFF> c1 c2 c3 c4 c5 c6 c7 c8
+RESTRICT> c4+c6=1
+RESTRICT> c4+c5+c8=1

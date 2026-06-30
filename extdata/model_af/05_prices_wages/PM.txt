@@ -1,0 +1,18 @@
+COMMENT> PM
+BEHAVIORAL> PM
+TSRANGE 1986 3 2019 3
+EQ> TSDELTALOG(PM,1) = c1 + c2*(LOG(TSLAG(PM,1))+LOG(TSLAG(NTWI,1)))
+                      +c3*(-LOG(TSLAG(WPX,1)))
+                      +c4*(-LOG(TSLAG(WPOIL,1)))
+                      +c6*TADP
+                      +c7*TSLAG(TSDELTALOG(PM,1),1)
+                      +c8*TSDELTALOG(NTWI,1)
+                      +c9*TSLAG(TSDELTALOG(NTWI,1),1)
+                      +c10*TSDELTALOG(WPX,1)
+                      +c11*TSLAG(TSDELTALOG(WPX,1),1)
+                      +c12*TSDELTALOG(POIL,1)
+                      +c13*TSLAG(TSDELTALOG(POIL,1),1)
+                      +c14*D_AFC1+c15*D_AFC2+c16*D_AFC3+c17*D_AFC4+c18*D_AFC5
+COEFF> c1 c2 c3 c4 c6 c7 c8 c9 c10 c11 c12 c13 c14 c15 c16 c17 c18
+RESTRICT>c7+c10+c11+c12+c13=1
+RESTRICT>c3+c4-c2=0

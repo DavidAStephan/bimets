@@ -1,0 +1,11 @@
+COMMENT> Mining Investment
+BEHAVIORAL> IBRE
+TSRANGE 1988 2 2019 3
+EQ> TSDELTALOG(IBRE,1) = c1 + c2*( LOG(TSLAG(IBRE,1)) - LOG(TSLAG(Y,1)) + LOG(TSLAG(PIBRE,1)) - LOG(TSLAG(PGNE,1)) - LOG(TSLAG(TDLLA,1) +TSLAG(TDLLPOP,1) + TSLAG(TDLLHPP,1) + TSLAG(IBREDR,1)/100) )
+                  + c3*(LOG(TSLAG(PXRE,1)) - LOG(TSLAG(PGNE,1))) 
+                  + c5*(LOG(PXRE)-LOG(TSLAG(PXRE,4)) - LOG(PGNE)+LOG(TSLAG(PGNE,4)))/4  
+                  + c6*LOG(TSLAG(IBRE,1)/TSLAG(IBRE,3))/2 
+                  + c7*(TSLAG(TDLLA,1) + TSLAG(TDLLPOP,1) + TSLAG(TDLLHPP,1) )  
+                  + c8*D_IBRE_1 + c9*D_IBRE_2 + c10*D_IBRE_3 + c11*D_IBRE_4 + c12*D_IBRE_5
+COEFF> c1 c2 c3 c5 c6 c7 c8 c9 c10 c11 c12
+RESTRICT>c6+c7=1

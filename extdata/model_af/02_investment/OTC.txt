@@ -1,0 +1,11 @@
+COMMENT> Ownership Transfer Costs
+BEHAVIORAL> OTC
+TSRANGE 1986 3 2019 3
+EQ> TSDELTALOG(OTC,1) = c1 + c2*(LOG(TSLAG(OTC,1)) - LOG(TSLAG(ID,1)))
+              +c3*(LOG(TSLAG(POTC,1)/LOG(TSLAG(PID,1))))
+              +c4*TSLAG(TSDELTA(NMR,1),1)/400
+              +c5*(TSDELTALOG(PH,1)*100 - 2.5/4)
+              +c6*D_GSTSEP
+              +c7*(TSLAG(TDLLA,1) + TSLAG(TDLLPOP,1) + TSLAG(TDLLPOP,1))
+COEFF> c1 c2 c3 c4 c5 c6 c7
+RESTRICT>c7=1

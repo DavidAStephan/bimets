@@ -1,0 +1,9 @@
+COMMENT> POTC
+BEHAVIORAL> POTC
+TSRANGE 1992 1 2019 3
+EQ> TSDELTALOG(POTC,1)= c1+c2*(LOG(TSLAG(POTC,1))-LOG(TSLAG(PC,1)))
+                        +c3*POTC_TREND_1
+                        +c4*POTC_TREND_2
+                        +c5*TSLAG(PI_E,1)/400
+COEFF> c1 c2 c3 c4 c5
+RESTRICT>c5=1

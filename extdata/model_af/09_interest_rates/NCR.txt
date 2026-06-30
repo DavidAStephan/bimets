@@ -1,0 +1,6 @@
+COMMENT> NCR
+BEHAVIORAL> NCR
+TSRANGE 2000 1 2019 3
+EQ> NCR  =c1*( 0.7  * TSLAG(NCR,1)  + 0.3  * ( RSTAR  + (PTM  / TSLAG(PTM,4)  * 100  - 100)  + (2  - 1)  * (PTM  / TSLAG(PTM,4)  * 100  - 100  - PI_TARGET)  - 2  * LURGAP)  - 2  / 2  * (LUR  - TSLAG(LUR,2)) )
+COEFF>c1
+RESTRICT>c1=1

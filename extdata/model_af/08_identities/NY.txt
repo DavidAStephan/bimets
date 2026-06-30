@@ -1,0 +1,3 @@
+COMMENT> NY
+IDENTITY> NY
+EQ>  NY  = NC  + NID  + NIB  + NG  + NOTC  + NV  + NX  - NM  - NATS  + NSD

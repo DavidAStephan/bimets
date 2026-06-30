@@ -1,0 +1,9 @@
+COMMENT> PXM
+BEHAVIORAL> PXM
+TSRANGE 1986 1 2019 3
+EQ> TSDELTALOG(PXM,1)=c1+c2*(LOG(TSLAG(PXM,1))-LOG(TSLAG(PM,1)))
+                      +c3*PXM_TREND/100
+                      +c4*TSDELTALOG(PM,1)
+                      +c5*TSLAG(PI_E,1)/400
+COEFF> c1 c2 c3 c4 c5
+RESTRICT>c4+c5=1

@@ -1,0 +1,3 @@
+COMMENT> R2R
+IDENTITY> R2R
+EQ>  R2R  = ((1  + N2R  / 100)  / (1  + PTM  / TSLAG(PTM,4)  - 1))  * 100  - 100

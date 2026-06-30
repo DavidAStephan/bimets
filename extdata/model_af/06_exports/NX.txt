@@ -1,0 +1,3 @@
+COMMENT> NX
+IDENTITY> NX
+EQ>  NX  = NXM  + NXS  + NXO  + NXRE  + NXAG

@@ -1,0 +1,8 @@
+COMMENT> PXRE
+BEHAVIORAL> PXRE
+TSRANGE 1985 2 2019 3
+EQ> TSDELTALOG(PXRE,1)=c1+c2*(LOG(TSLAG(PXRE,1))-LOG(TSLAG(WPCOM,1))+LOG(TSLAG(NUSD,1)))
+                      +c3*TSDELTALOG(NUSD,1)
+                      +c4*TSDELTALOG(WPCOM,1)
+                      +c5*TSLAG(PI_E,1)/400
+COEFF> c1 c2 c3 c4 c5

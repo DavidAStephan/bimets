@@ -1,0 +1,8 @@
+COMMENT> 10 Year Bond Rate
+BEHAVIORAL> N10R
+TSRANGE 1993 1 2019 3
+EQ> N10R = c1*TSLAG(N10R,1)
+            +c2*(RSTAR+PI_E+0.25*(NCR-PI_E-RSTAR))
+            +c3
+COEFF> c1 c2 c3
+RESTRICT> c1+c2 = 1

@@ -1,10 +1,11 @@
 #' Path to a MARTIN model variant
 #'
-#' The default `"af"` form is split, for readability, into one file per economic
-#' block under `extdata/model_af/` (consumption, prices, exports, imports,
-#' identities, ...) and assembled at load time by [read_model_lines()] — so for
-#' `"af"` this returns the *directory*. The `"identity"` and `"est"` variants are
-#' still single vendored `.txt` files.
+#' The default `"af"` form is split, for readability, into **one file per
+#' equation** (`RC.txt`, `ID.txt`, ...) grouped into per-block subdirectories
+#' under `extdata/model_af/` (`01_household/`, `05_prices_wages/`, ...) and
+#' assembled at load time by [read_model_lines()] — so for `"af"` this returns
+#' the *directory*. The `"identity"` and `"est"` variants are still single
+#' vendored `.txt` files.
 #'
 #' @param variant One of `"af"` (default — the behavioural form with a
 #'   `ConstantAdjustment` add-factor slot on every equation; 95 `BEHAVIORAL>`
@@ -36,10 +37,11 @@ model_af_dir <- function() {
 
 #' Read a MARTIN model variant as a character vector of model-definition lines
 #'
-#' The `"af"` variant is assembled from the per-block files in [model_af_dir()]
-#' (sorted by their numeric prefix, wrapped in `MODEL` ... `END`); the other
-#' variants are read straight from their single vendored file. Equation order
-#' across the blocks does not affect estimation or simulation — bimets builds the
+#' The `"af"` variant is assembled from the per-equation files in
+#' [model_af_dir()] (recursively, sorted so block subdirectories order by their
+#' numeric prefix and equations sort within each; wrapped in `MODEL` ... `END`);
+#' the other variants are read straight from their single vendored file.
+#' Equation order does not affect estimation or simulation — bimets builds the
 #' system from the equations, not their file order.
 #'
 #' @param variant See [model_file_path()].
@@ -48,10 +50,11 @@ model_af_dir <- function() {
 read_model_lines <- function(variant = c("af", "identity", "est")) {
   variant <- match.arg(variant)
   if (variant != "af") return(readLines(model_file_path(variant)))
-  files <- sort(list.files(model_af_dir(), pattern = "\\.txt$", full.names = TRUE))
+  files <- sort(list.files(model_af_dir(), pattern = "\\.txt$",
+                           full.names = TRUE, recursive = TRUE))
   c("MODEL",
     "COMMENT> MARTIN macroeconometric model (bimets additive-factor form)",
-    "COMMENT> assembled from the per-block files in extdata/model_af/",
+    "COMMENT> assembled from the per-equation files in extdata/model_af/",
     "",
     unlist(lapply(files, readLines), use.names = FALSE),
     "",

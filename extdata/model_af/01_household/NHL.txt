@@ -1,0 +1,11 @@
+COMMENT> Household Liabilities
+BEHAVIORAL> NHL
+TSRANGE 1993 1 2019 3
+EQ> TSDELTALOG(NHL,1)= c1+c10*LOG(TSLAG(NHL,1))
+              +c2*(-LOG(TSLAG(NHC,1)))+c3*(-LOG(TSLAG(NY,1)))
+              +c4*TSLAG(TSDELTALOG(NHL,1),1)
+              +c5*TSDELTALOG(NHC,1)
+              +c6*TSDELTALOG(NY,1)
+COEFF> c1 c10 c2 c3 c4 c5 c6
+RESTRICT>c2+c3-c10=0 
+RESTRICT>c4+c5+c6=1

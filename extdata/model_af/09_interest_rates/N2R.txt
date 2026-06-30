@@ -1,0 +1,7 @@
+COMMENT> 2-Year Bond Rate
+BEHAVIORAL> N2R
+TSRANGE 1993 1 2019 3
+EQ> N2R= c1 + c2*(RSTAR+PI_E+0.52*(NCR-RSTAR-PI_E))
+            +c3*TSLAG(N2R,1)
+COEFF> c1 c2 c3
+RESTRICT> c2 + c3 = 1
