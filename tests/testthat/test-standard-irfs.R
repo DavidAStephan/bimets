@@ -42,6 +42,16 @@ test_that("standard_irf_specs() covers the four standard shocks", {
   }
 })
 
+test_that(".irf_rate_vars covers rates but not the exchange-rate indices", {
+  rv <- .irf_rate_vars()
+  # unemployment + domestic & world interest rates and spreads are ppt ...
+  expect_true(all(c("LUR", "NCR", "N2R", "N10R", "RCR", "NBR", "NMR",
+                    "NSP", "NBRSP", "RBR", "RMR", "RMRE", "R2R", "RSTAR",
+                    "PI_E", "WRR", "WR2R", "WRSP", "WR2SP") %in% rv))
+  # ... but the exchange-rate indices stay percent deviations.
+  expect_false(any(c("RTWI", "NTWI", "NUSD", "REWI") %in% rv))
+})
+
 test_that("irf_deviation_table honours the rate_vars set (pure, no solve)", {
   base <- tibble::tibble(
     variable = c("Y", "LUR", "NCR"), quarter = rep("2010Q1", 3),

@@ -56,10 +56,22 @@ NULL
 }
 
 # Variables reported as a rate (percentage points): an additive deviation, not
-# a percent deviation. Everything else is reported as a percent deviation.
+# a percent deviation. These are the interest rates, the unemployment rate, and
+# the percent-unit trends/spreads. Everything else — including the exchange-rate
+# indices RTWI/NTWI/NUSD/REWI (log_diff levels) — is a percent deviation.
 .irf_rate_vars <- function() {
-  c("LUR", "TLUR", "NCR", "RCR", "RSTAR", "N2R", "N10R", "NBR", "NMR",
-    "R2R", "WRR", "WR2R", "PI_E")
+  c(
+    # unemployment rate + NAIRU
+    "LUR", "TLUR",
+    # nominal domestic interest rates + spreads
+    "NCR", "N2R", "N10R", "NBR", "NMR", "NSP", "NBRSP",
+    # real domestic interest rates + neutral rate
+    "RCR", "R2R", "RBR", "RMR", "RMRE", "RSTAR",
+    # inflation expectations (a percent rate)
+    "PI_E",
+    # world interest rates + spreads
+    "WRR", "WR2R", "WRSP", "WR2SP"
+  )
 }
 
 #' The four standard impulse-response shock specifications
