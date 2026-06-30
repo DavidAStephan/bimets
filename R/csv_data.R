@@ -187,20 +187,30 @@ database_to_csv <- function(database, path,
 
 #' The variables a MARTIN model variant references
 #'
-#' Loads the model definition (no data, no estimation) and returns the union of
-#' its endogenous (`vendog`) and exogenous (`vexog`) variable names — the set a
-#' [read_csv_database()] header is validated against.
+#' Loads the model definition (no data, no estimation) and returns its variable
+#' names — the set a [read_csv_database()] header is validated against, and the
+#' set [standard_irfs()] can report deviations over.
 #'
 #' @param variant See [model_file_path()].
+#' @param which Which names to return: `"all"` (default — endogenous +
+#'   exogenous), `"endogenous"` (`vendog` — the variables the model solves), or
+#'   `"exogenous"` (`vexog`).
 #' @return A sorted character vector of variable names.
 #' @export
-martin_model_variables <- function(variant = c("af", "identity", "est")) {
+martin_model_variables <- function(variant = c("af", "identity", "est"),
+                                   which = c("all", "endogenous", "exogenous")) {
   variant <- match.arg(variant)
+  which   <- match.arg(which)
   model_text <- paste(read_model_lines(variant), collapse = "\n")
   m <- .suppress_bimets_version_warning(suppressMessages(suppressWarnings(
     bimets::LOAD_MODEL(modelText = model_text)
   )))
-  sort(unique(c(m$vendog, m$vexog)))
+  vars <- switch(which,
+    all        = c(m$vendog, m$vexog),
+    endogenous = m$vendog,
+    exogenous  = m$vexog
+  )
+  sort(unique(vars))
 }
 
 # ---- internals -------------------------------------------------------------

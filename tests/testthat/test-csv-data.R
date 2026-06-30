@@ -61,6 +61,17 @@ test_that("martin_model_variables returns the model's endo + exo names", {
   expect_false(anyDuplicated(v) > 0)
 })
 
+test_that("martin_model_variables(which=) splits endogenous and exogenous", {
+  skip_if_not_installed("bimets")
+  all <- martin_model_variables("af", "all")
+  en  <- martin_model_variables("af", "endogenous")
+  ex  <- martin_model_variables("af", "exogenous")
+  expect_setequal(union(en, ex), all)
+  expect_length(intersect(en, ex), 0L)
+  expect_true(length(en) > length(ex))
+  expect_true(all(c("Y", "RC", "NCR") %in% en))   # solved variables
+})
+
 test_that("database_to_csv -> read_csv_database round-trips the fixture", {
   fx  <- csv_fixture_db()
   tmp <- tempfile(fileext = ".csv")
