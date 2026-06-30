@@ -12,7 +12,7 @@
 #   2. govcons_1pc     — +1% government consumption (GC) for one quarter.
 #   3. commodity_10pc  — a PERMANENT +10% lift to world commodity prices
 #                        (WPCOM), held by offsetting the equation's reversion.
-#   4. rer_10pc        — ~+10% real-exchange-rate (RTWI) appreciation, 1 quarter.
+#   4. rer_10pc        — ~+10% real-exchange-rate (RTWI) appreciation, 1 qtr.
 #
 # Every shock is delivered as an add-factor on the equation's residual, leaving
 # the variable endogenous so its lags carry the shock forward and it propagates
@@ -20,10 +20,10 @@
 # NOT propagate downstream in this engine — see R/irf_scenarios.R.)
 #
 # REPORTING UNITS: every variable is reported as a percent (%) deviation from
-# baseline EXCEPT the unemployment rate (LUR) and the cash rate (NCR), which are
-# reported as plain percentage-point (ppt) deviations. (Other interest-rate
-# variables — N2R, N10R, RCR, ... — therefore appear as % deviations; ask if you
-# want them as ppt too.)
+# baseline EXCEPT the rate variables — the unemployment rate, all domestic and
+# world interest rates and spreads, the neutral rate, and inflation expectations
+# (see .irf_rate_vars()) — which are reported as plain percentage-point (ppt)
+# deviations. Exchange-rate indices (RTWI/NTWI/NUSD) stay as % deviations.
 #
 # MARTIN is nonlinear: the +100bp / +1% / +10% magnitudes are conventional
 # reporting sizes, not freely rescalable. Coefficients are FROZEN by default
@@ -43,9 +43,9 @@ shock_start <- "2010Q1"
 offsets     <- c(0L, 1L, 2L, 4L, 8L, 12L, 16L, 20L)
 
 # Report every variable the model solves; present each as a % deviation EXCEPT
-# the two rates the brief calls out, which are reported as ppt deviations.
+# the rate variables (.irf_rate_vars() — unemployment + interest rates/spreads),
+# which are reported as ppt deviations.
 report_vars <- martin_model_variables("af", which = "endogenous")
-rate_vars   <- c("LUR", "NCR")
 
 cat("Baseline ", horizon[1], " -> ", horizon[2], " ...\n", sep = "")
 base <- solve_martin(db, horizon = horizon, scenario = "baseline")
@@ -59,7 +59,6 @@ irf <- standard_irfs(
   shock_start = shock_start,
   baseline    = base,
   report_vars = report_vars,
-  rate_vars   = rate_vars,
   offsets     = offsets,
   progress    = TRUE
 )
@@ -132,8 +131,8 @@ for (k in unique(irf$scenario)) {
     cat("\n")
   }
 }
-cat("\nRead: 'p' = percentage-point deviation (LUR, NCR only);",
-    "'%' = percent deviation from baseline (all other variables).\n")
+cat("\nRead: 'p' = percentage-point deviation (rates: unemployment + interest",
+    "rates/spreads);\n      '%' = percent deviation from baseline (all else).\n")
 
 saveRDS(irf, file.path(root, "data", "standard_irfs.rds"))
 cat(sprintf("\nWrote %d CSV files to %s:\n", length(written) + 1L, outdir))
