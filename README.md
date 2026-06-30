@@ -24,6 +24,7 @@ R-MARTIN/
 ├── setup.R              # source this: loads deps + all of R/ into the session
 ├── R/                   # the model, one concern per file
 │   ├── fetch_*.R, cache.R, catalogue.R, update_data.R   # download data
+│   ├── csv_data.R                                        # OR load data from a CSV
 │   ├── transformations.R, identities.R, derived.R,
 │   │   dummies.R, state_space.R, tpw.R, production.R,
 │   │   extend_exogenous.R, merge.R                       # build / modify data
@@ -31,11 +32,13 @@ R-MARTIN/
 │   ├── load_martin.R, model_features.R,
 │   │   equation_catalogue.R                              # estimate + build in bimets
 │   ├── solve_martin.R                                    # forecast (uncond / cond / stochastic)
-│   ├── sensitivity_matrix.R                              # IRFs / multipliers
+│   ├── sensitivity_matrix.R, irf_scenarios.R            # IRFs: generic + standard battery
 │   ├── adjustment.R, quarter.R                           # add-factors
 │   └── read_fixture.R, paths.R, utils.R                  # plumbing
 ├── extdata/             # bundled model files + catalogues + frozen data fixture
-├── scripts/             # runnable drivers, one per capability (01..06)
+│   └── model_af/        # AF model: one file per equation, grouped by block
+├── scripts/             # runnable drivers, one per capability (01..09)
+├── results/irfs/        # committed standard-IRF output CSVs
 ├── tests/               # testthat suite + tests/run_tests.R
 └── data/                # local parquet cache + saved projections (gitignored)
 ```
@@ -77,6 +80,8 @@ Rscript scripts/04_forecast_conditional.R  # add-factors + exogenisation
 Rscript scripts/05_irf.R                   # impulse responses
 Rscript scripts/06_stochastic.R            # uncertainty bands
 Rscript scripts/07_beveridge_curve.R       # ABS job vacancies -> vacancy rate -> Beveridge curve
+Rscript scripts/08_standard_irfs.R         # standard IRF battery -> results/irfs/*.csv
+Rscript scripts/09_forecast_from_csv.R     # forecast from a CSV instead of downloading
 ```
 
 Or interactively:
@@ -98,11 +103,33 @@ irf   <- sensitivity_matrix(db, baseline = base, horizon = c("2010Q1","2018Q4"))
 bands <- solve_martin_stochastic(db, horizon = c("2010Q1","2018Q4"), n_draws = 200)
 ```
 
+## Run it with your own data (CSV)
+
+No downloads and no API keys: put your data in a CSV (one **period** column plus
+one column **per MARTIN variable**, header = the variable name) and load it
+straight into the model.
+
+```r
+source("setup.R")
+db   <- read_csv_database("my_data.csv")                    # CSV -> model database
+base <- solve_martin(db, horizon = c("2010Q1", "2024Q4"))   # forecast
+```
+
+To get the exact column format, export the bundled fixture as a template and
+edit it (`database_to_csv(read_fixture(), "template.csv")`); to run with a
+partial / recent-only CSV, fill the gaps from the bundled data
+(`read_csv_database("my_data.csv", fallback = read_fixture())`).
+
+**Full step-by-step walkthrough: [docs/running_from_csv.md](docs/running_from_csv.md)**
+(includes forecasting past your data end, scenarios, and IRFs). The runnable
+demo is `Rscript scripts/09_forecast_from_csv.R`.
+
 ## Coefficients: frozen vs re-estimated
 
 The behavioural (AF) model defines 95 `BEHAVIORAL>` equations, split for
-readability into one file per economic block under `extdata/model_af/`
-(consumption, prices, exports, imports, identities, ...) and assembled at load.
+readability into one file per equation under `extdata/model_af/` (grouped into
+per-block subdirectories: `01_household/`, `05_prices_wages/`, ...) and
+assembled at load.
 `bimets::ESTIMATE` re-fits their free coefficients on **every** load; "frozen"
 (the default) just means it estimates over the model's embedded **2019Q3**
 sample, reproducing the published coefficients. To re-fit over a later sample (which crosses the COVID
@@ -118,14 +145,14 @@ solve_martin(db, horizon = h, coefficients = "reestimated", estimation_end = "20
 Rscript tests/run_tests.R
 ```
 
-Runs the full `testthat` suite (720 assertions), including a regression test
+Runs the full `testthat` suite (800+ assertions), including a regression test
 that asserts the no-adjustment solve matches the canonical `bimets` reference
 to within solver tolerance. Network-dependent data-fetch tests skip when offline.
 
 ## Provenance
 
-The `bimets` model definitions in `extdata/` (the per-block `model_af/` files and
-the single-file `MARTINMOD.txt`/`MARTINMOD_EST.txt` variants) and the frozen
+The `bimets` model definitions in `extdata/` (the per-equation `model_af/` files
+and the single-file `MARTINMOD.txt`/`MARTINMOD_EST.txt` variants) and the frozen
 `martin_data_fixture.xlsx` are vendored, with attribution, from the upstream
 MARTIN ports:
 
