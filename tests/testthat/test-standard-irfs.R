@@ -42,6 +42,32 @@ test_that("standard_irf_specs() covers the four standard shocks", {
   }
 })
 
+test_that("irf_deviation_table honours the rate_vars set (pure, no solve)", {
+  base <- tibble::tibble(
+    variable = c("Y", "LUR", "NCR"), quarter = rep("2010Q1", 3),
+    value    = c(100, 5, 2)
+  )
+  scen <- tibble::tibble(
+    variable = c("Y", "LUR", "NCR"), quarter = rep("2010Q1", 3),
+    value    = c(110, 5.5, 3)
+  )
+  tab <- irf_deviation_table(base, scen, c("Y", "LUR", "NCR"), "2010Q1",
+                             offsets = 0L, scenario_key = "s",
+                             scenario_label = "s", rate_vars = c("LUR", "NCR"))
+  # Y -> percent deviation; LUR, NCR -> percentage-point (level) deviation.
+  expect_equal(tab$measure[tab$variable == "Y"], "pct")
+  expect_equal(tab$deviation[tab$variable == "Y"], 10)
+  expect_equal(tab$measure[tab$variable == "LUR"], "ppt")
+  expect_equal(tab$deviation[tab$variable == "LUR"], 0.5)
+  expect_equal(tab$measure[tab$variable == "NCR"], "ppt")
+  expect_equal(tab$deviation[tab$variable == "NCR"], 1)
+  # With NCR outside rate_vars it is reported as a percent deviation instead.
+  tab2 <- irf_deviation_table(base, scen, "NCR", "2010Q1", 0L, "s", "s",
+                              rate_vars = "LUR")
+  expect_equal(tab2$measure, "pct")
+  expect_equal(tab2$deviation, 50)
+})
+
 test_that("the standard IRF battery solves and moves with the right signs", {
   data <- irf_fixture()
   horizon     <- c("2008Q1", "2014Q4")

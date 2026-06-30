@@ -68,8 +68,8 @@ NULL
 #'   has: `label` (human text), `equation`, `value` (the per-quarter add-factor,
 #'   i.e. the impact-quarter jump), `n_quarters` (length of the explicit shock
 #'   window; `NA` = run to the horizon end for a permanent shock), `tail` (see
-#'   [adjustment()]), `hold` (`NA`, or a sustained per-quarter add-factor applied
-#'   after the first quarter to hold a permanent level shift), and `ceiling`
+#'   [adjustment()]), `hold` (`NA`, or a sustained per-quarter add-factor
+#'   applied after the first quarter to hold a permanent level shift), `ceiling`
 #'   (`NULL`, or a `sibyl.af_ceiling` override for shocks larger than the
 #'   default per-units bound).
 #' @export
@@ -184,16 +184,18 @@ run_irf_scenario <- function(database, horizon, shock_start, spec,
 #' @param shock_start `"yyyyQq"` the shock begins.
 #' @param offsets Integer quarter offsets from `shock_start` (0 = impact).
 #' @param scenario_key,scenario_label Identifiers written into the output.
+#' @param rate_vars Variables reported as an additive (percentage-point)
+#'   deviation rather than a percent deviation. Default [.irf_rate_vars()].
 #' @return A tidy tibble: one row per (variable, offset) with `baseline`,
 #'   `scenario_value`, `deviation`, and `measure` (`"pct"` or `"ppt"`).
 #' @export
 irf_deviation_table <- function(baseline, scenario, vars, shock_start,
-                                offsets, scenario_key, scenario_label) {
+                                offsets, scenario_key, scenario_label,
+                                rate_vars = .irf_rate_vars()) {
   base_lk <- lapply(split(baseline, baseline$variable),
                     function(d) stats::setNames(d$value, d$quarter))
   scen_lk <- lapply(split(scenario, scenario$variable),
                     function(d) stats::setNames(d$value, d$quarter))
-  rate_vars <- .irf_rate_vars()
 
   rows <- list()
   for (v in vars) {
@@ -242,7 +244,12 @@ irf_deviation_table <- function(baseline, scenario, vars, shock_start,
 #'   derives `horizon[2] - max(offsets)` so the longest offset stays in-window.
 #' @param baseline Optional pre-computed baseline projection; solved here if
 #'   `NULL`.
-#' @param report_vars Headline variables to report deviations on.
+#' @param report_vars Variables to report deviations on. Default = the headline
+#'   aggregates; pass `martin_model_variables("af", "endogenous")` for every
+#'   variable the model solves.
+#' @param rate_vars Variables reported as a percentage-point deviation rather
+#'   than a percent deviation. Default [.irf_rate_vars()]; pass
+#'   `c("LUR", "NCR")` to report only the unemployment and cash rates that way.
 #' @param offsets Integer quarter offsets from `shock_start` (0 = impact).
 #' @param specs Named list of shock specs; default [standard_irf_specs()].
 #' @param coefficients,estimation_end Passed to [solve_martin()] (frozen by
@@ -258,6 +265,7 @@ standard_irfs <- function(database,
                           baseline     = NULL,
                           report_vars  = c("Y", "GNE", "LUR", "P", "PTM",
                                            "NCR", "RTWI", "TOT", "WPCOM"),
+                          rate_vars    = .irf_rate_vars(),
                           offsets      = c(0L, 1L, 4L, 8L, 12L, 16L, 20L),
                           specs        = standard_irf_specs(),
                           coefficients = c("frozen", "reestimated"),
@@ -291,7 +299,8 @@ standard_irfs <- function(database,
     conv[[key]] <- attr(scen, "convergence")
     rows[[key]] <- irf_deviation_table(
       baseline, scen, report_vars, shock_start, offsets,
-      scenario_key = key, scenario_label = spec$label
+      scenario_key = key, scenario_label = spec$label,
+      rate_vars = rate_vars
     )
   }
 
